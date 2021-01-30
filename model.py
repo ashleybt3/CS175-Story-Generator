@@ -11,10 +11,10 @@ from torch import nn
 
 """
 general flow:
-* open & extract file contents
-* tokenize text
-* convert vocab to numeric format
-* build sequences
+* open & extract file contents #
+* tokenize text #
+* convert vocab to numeric format #
+* build sequences #
 * build model
 * train model
 * predict/generate text
