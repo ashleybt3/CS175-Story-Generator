@@ -46,7 +46,11 @@ def extract_text(filename):
 
 
 def text_to_idx_dict(tokens):
-	"""assign word to index and vice versa"""
+	"""
+	create two dictionaries:
+	(1) maps word to index
+	(2) maps index to word
+	"""
 	idx_to_tok = {}
 	tok_to_idx = {}
 
@@ -58,9 +62,9 @@ def text_to_idx_dict(tokens):
 	return idx_to_tok, tok_to_idx
 
 def create_sequences(tokens, tok_to_idx, seq_len):
-	"""create seq_len sized chunks of text"""
-	x = []
-	y = []
+	"""create seq_len sized chunks of text (simulate sentence creating)"""
+	seq = []
+	targ = []
 
 	for i in range(seq_len, len(tokens)):
 		sequence = tokens[i - seq_len: i]
@@ -69,13 +73,13 @@ def create_sequences(tokens, tok_to_idx, seq_len):
 		target = tokens[i - seq_len]
 		target = tok_to_idx[target]
 
-		x.append(sequence)
-		y.append(target)
+		seq.append(sequence)
+		targ.append(target)
 
-	x = np.array(x)
-	y = np.array(y)
+	seq = np.array(seq)
+	targ = np.array(targ)
 
-	return x, y	
+	return seq, targ
 
 
 # #PROBABLY WILL NEED TO CHANGE THIS: JUST A BASE	
