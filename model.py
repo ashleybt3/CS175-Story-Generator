@@ -82,35 +82,39 @@ def create_sequences(tokens, tok_to_idx, seq_len):
 	return seq, targ
 
 
-# #PROBABLY WILL NEED TO CHANGE THIS: JUST A BASE	
-# class myRNN(nn.Module):
-# 	"""sample RNN from assignment2.py"""
-# 	def __init__(self, input_size, hidden_size, output_size):
-# 		super(myRNN, self).__init__()
+class modelRNN(nn.Module):
+	"""sample RNN from assignment2.py"""
+	def __init__(self, input_size, hidden_size, output_size, n_layers):
+		super(modelRNN, self).__init__()
 
-# 		# Put the declaration of the RNN network here
-# 		self.hidden_size = hidden_size
-# 		self.i2h = nn.Linear(input_size + hidden_size, hidden_size)
-# 		self.i2o = nn.Linear(input_size + hidden_size, output_size)
-# 		self.softmax = nn.LogSoftmax(dim = 1)
+		self.hidden_size = hidden_size
+		self.n_layers = n_layers
 
-# 	def forward(self, input, hidden):
-# 		# Put the computation for the forward pass here
-# 		combined = torch.cat((input, hidden), 1) #
-# 		hidden = self.i2h(combined) #
+		#layer declaration
+		self.rnn = nn.RNN(input_size, hidden_size, n_layers, batch_first = True)
+		self.lin = nn.Linear(hidden_size, output_size)
 
-# 		output = self.i2o(combined)
-# 		output = self.softmax(output)
-# 		#hidden = 
+	def forward(self, input):
+		batch_size = input.size(0)
+		hidden = self.initHidden(batch_size)
 
-# 		return output, hidden
+		output, hidden = self.rnn(input, hidden)
+		output = output.contiguous().view(-1, self.hidden_size) ##
+		output = self.lin(out)
 
-# 	def initHidden(self):
-# 		return (torch.zeros(1, self.hidden_size), torch.zeros(1, self.hidden_size))
+		return output, hidden
+
+	def initHidden(self, batch_size):
+		return torch.zeros(self.n_layers, batch_size, self.hidden_size)
 
 
-# def training():
-# 	pass
+def training(model, n_epochs, learn_rate):
+	#number of epochs (# times model go thru training data)
+	#learning rate (rate at which model updates weights when back propogation done)
+	criterion = nn.CrossEntropyLoss()
+	optimizer = torch.optim.Adam(model.parameters(), lr= learn_rate)
+	for epoch in range(n_epochs):
+		pass
 
 
 # def predict():
