@@ -9,6 +9,7 @@ import nltk
 import torch
 from torch import nn
 
+from sklearn.preprocessing import OneHotEncoder
 """
 general flow:
 * open & extract file contents #
@@ -81,7 +82,6 @@ def create_sequences(tokens, tok_to_idx, seq_len):
 
 	return seq, targ
 
-
 class modelRNN(nn.Module):
 	"""sample RNN from assignment2.py"""
 	def __init__(self, input_size, hidden_size, output_size, n_layers):
@@ -94,52 +94,76 @@ class modelRNN(nn.Module):
 		self.rnn = nn.RNN(input_size, hidden_size, n_layers, batch_first = True)
 		self.lin = nn.Linear(hidden_size, output_size)
 
-	def forward(self, input):
-		batch_size = input.size(0)
-		hidden = self.initHidden(batch_size)
+	def forward(self, x):
+		batch_size = torch.FloatTensor(x).size(0)
+		#print("lol: ", batch_size)
+		hidden = self.initHidden()
 
-		output, hidden = self.rnn(input, hidden)
+		output, hidden = self.rnn(x, hidden)
 		output = output.contiguous().view(-1, self.hidden_size) ##
 		output = self.lin(out)
 
 		return output, hidden
 
-	def initHidden(self, batch_size):
-		return torch.zeros(self.n_layers, batch_size, self.hidden_size)
+	def initHidden(self):
+		#return torch.zeros(self.n_layers, batch_size, self.hidden_size)
+		return torch.zeros(self.n_layers, self.hidden_size)
 
-
-def training(model, n_epochs, learn_rate):
+def training(model, sequence, target, n_epochs, learn_rate):
 	#number of epochs (# times model go thru training data)
 	#learning rate (rate at which model updates weights when back propogation done)
 	criterion = nn.CrossEntropyLoss()
 	optimizer = torch.optim.Adam(model.parameters(), lr= learn_rate)
-	for epoch in range(n_epochs):
-		pass
 
-def predict(model, sequences, idx_to_text, n_words):
+	print(model)
+	print(sequence)
+	print(target)
+
+
+	for epoch in range(n_epochs):
+		output, hidden = model.forward(sequence) #forward
+		# loss = criterion(output, target.view(-1).long())
+		# loss.backward()
+		# optimizer.step()
+
+		# if epoch%10 == 0:
+		# 	print("Epoch: {}/{}------Loss: {%.3f}".format(epoch, n_epochs, loss.item()))
+
+def predict(model, idx_to_text, n_words):
 	pass
 
 
 	
 if __name__ == '__main__':
 	tokens = extract_text("alice.txt")
-	vocab_size = len(tokens)
+	tok_size = len(tokens)
 
 	print("Sample of First 100 Tokens:\n", tokens[0:100])
-	print("Vocabulary Size: ", vocab_size)
+	print("Total Tokens: ", tok_size)
 
 
 	a, b = text_to_idx_dict(tokens)
-	print(len(a))
-	print(len(b))
+	# print(a)
+	# print(b)
+	print(len(a)) #idx_to_tok
+	print(len(b)) #tok_to_idx
+
+	vocab_size = len(b)
+	print("Size of Vocab: ", vocab_size)
+
 
 	x, y = create_sequences(tokens, b, 5)
-	print(x)
-	print(y)
+	print(x[0:10]) #seq
+	print(y[0:10]) #targ
+
 
 	#input_size, hidden_size, output_size, n_layers
-	n_hidden = 128
+	n_hidden = 12
 	n_layers = 1
 	rnnModel = modelRNN(vocab_size, n_hidden, vocab_size, 1)
 
 	print(rnnModel)
+
+	# n_epochs = 100
+	# learning_rate = 0.01
+	# training(rnnModel, input_sequence, target_sequence, n_epochs, learning_rate)
