@@ -16,6 +16,7 @@ general flow:
 * tokenize text #
 * convert vocab to numeric format #
 * build sequences #
+* encoding???
 * build model
 * train model
 * predict/generate text
@@ -63,30 +64,37 @@ def text_to_idx_dict(tokens):
 	return idx_to_tok, tok_to_idx
 
 def create_sequences(tokens, tok_to_idx, seq_len):
-	"""create seq_len sized chunks of text (simulate sentence creating)"""
-	seq = []
-	targ = []
+	"""create seq_len sized chunks of text & binary encode them"""
+	sequences = []
+	targets = []
+	max_wordlen = len(max(tokens, key = len))
 
 	for i in range(seq_len, len(tokens)):
-		sequence = tokens[i - seq_len: i]
-		sequence = [tok_to_idx[s] for s in sequence]
+		seq = tokens[i - seq_len: i]
+		targ = tokens[i - seq_len]
+		
+		sequences.append(seq)
+		targets.append(targ)
 
-		target = tokens[i - seq_len]
-		target = tok_to_idx[target]
+	#-------------------------------------------
+	x = np.zeros((len(sequences), seq_len, len(tokens)), dtype = np.float32)
+	y = np.zeros((len(sequences), len(tokens)), dtype = np.float32)
 
-		seq.append(sequence)
-		targ.append(target)
+	for i, wordchunk in enumerate(sequences):
+		for j, word in enumerate(wordchunk):
+			x[i, j, tok_to_idx[word]] = 1
+		y[i, tok_to_idx[targets[i]]] = 1
 
-	seq = np.array(seq)
-	targ = np.array(targ)
+	return x, y
 
-	return seq, targ
+
 
 class modelRNN(nn.Module):
-	"""sample RNN from assignment2.py"""
+	"""simple RNN w/ a linear layer"""
 	def __init__(self, input_size, hidden_size, output_size, n_layers):
 		super(modelRNN, self).__init__()
 
+		#param definition
 		self.hidden_size = hidden_size
 		self.n_layers = n_layers
 
@@ -94,31 +102,26 @@ class modelRNN(nn.Module):
 		self.rnn = nn.RNN(input_size, hidden_size, n_layers, batch_first = True)
 		self.lin = nn.Linear(hidden_size, output_size)
 
-	def forward(self, x):
-		batch_size = torch.FloatTensor(x).size(0)
-		#print("lol: ", batch_size)
-		hidden = self.initHidden()
+	def forward(self, x_input):
+		batch_size = x_input.size(0)
+		#batch_size = x_input.size(0)
+		hidden = self.initHidden(batch_size)
 
-		output, hidden = self.rnn(x, hidden)
+		output, hidden = self.rnn(x_input, hidden)
 		output = output.contiguous().view(-1, self.hidden_size) ##
-		output = self.lin(out)
+		output = self.lin(output)
 
 		return output, hidden
 
-	def initHidden(self):
-		#return torch.zeros(self.n_layers, batch_size, self.hidden_size)
-		return torch.zeros(self.n_layers, self.hidden_size)
+	def initHidden(self, batch_size):
+		return torch.zeros(self.n_layers, batch_size, self.hidden_size)
+		#return torch.zeros(self.n_layers, self.hidden_size)
 
 def training(model, sequence, target, n_epochs, learn_rate):
 	#number of epochs (# times model go thru training data)
 	#learning rate (rate at which model updates weights when back propogation done)
 	criterion = nn.CrossEntropyLoss()
 	optimizer = torch.optim.Adam(model.parameters(), lr= learn_rate)
-
-	print(model)
-	print(sequence)
-	print(target)
-
 
 	for epoch in range(n_epochs):
 		output, hidden = model.forward(sequence) #forward
@@ -129,13 +132,16 @@ def training(model, sequence, target, n_epochs, learn_rate):
 		# if epoch%10 == 0:
 		# 	print("Epoch: {}/{}------Loss: {%.3f}".format(epoch, n_epochs, loss.item()))
 
-def predict(model, idx_to_text, n_words):
-	pass
+# def predict(model, idx_to_text, n_words):
+# 	pass
 
 
 	
 if __name__ == '__main__':
 	tokens = extract_text("alice.txt")
+	# tok_size = len(tokens)
+
+	tokens = tokens[0:100]
 	tok_size = len(tokens)
 
 	print("Sample of First 100 Tokens:\n", tokens[0:100])
@@ -150,20 +156,22 @@ if __name__ == '__main__':
 
 	vocab_size = len(b)
 	print("Size of Vocab: ", vocab_size)
-
+	print(b)
 
 	x, y = create_sequences(tokens, b, 5)
 	print(x[0:10]) #seq
 	print(y[0:10]) #targ
 
+	input_seq = torch.from_numpy(x)
+	targ_seq = torch.Tensor(y)
 
 	#input_size, hidden_size, output_size, n_layers
 	n_hidden = 12
-	n_layers = 1
-	rnnModel = modelRNN(vocab_size, n_hidden, vocab_size, 1)
+	n_layers = 2
+	rnnModel = modelRNN(tok_size, n_hidden, tok_size, 1)
 
 	print(rnnModel)
 
-	# n_epochs = 100
-	# learning_rate = 0.01
-	# training(rnnModel, input_sequence, target_sequence, n_epochs, learning_rate)
+	n_epochs = 100
+	learning_rate = 0.01
+	training(rnnModel, input_seq, targ_seq, n_epochs, learning_rate)
