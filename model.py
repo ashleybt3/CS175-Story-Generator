@@ -116,9 +116,8 @@ def training(model, n_epochs, learn_rate):
 	for epoch in range(n_epochs):
 		pass
 
-
-# def predict():
-# 	pass
+def predict(model, sequences, idx_to_text, n_words):
+	pass
 
 
 	
@@ -126,8 +125,8 @@ if __name__ == '__main__':
 	tokens = extract_text("alice.txt")
 	vocab_size = len(tokens)
 
-	print(tokens[0:100])
-	print(vocab_size)
+	print("Sample of First 100 Tokens:\n", tokens[0:100])
+	print("Vocabulary Size: ", vocab_size)
 
 
 	a, b = text_to_idx_dict(tokens)
@@ -137,3 +136,10 @@ if __name__ == '__main__':
 	x, y = create_sequences(tokens, b, 5)
 	print(x)
 	print(y)
+
+	#input_size, hidden_size, output_size, n_layers
+	n_hidden = 128
+	n_layers = 1
+	rnnModel = modelRNN(vocab_size, n_hidden, vocab_size, 1)
+
+	print(rnnModel)
