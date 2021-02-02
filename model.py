@@ -16,9 +16,9 @@ general flow:
 * tokenize text #
 * convert vocab to numeric format #
 * build sequences #
-* encoding???
-* build model
-* train model
+* encoding #
+* build model #
+* train model #
 * predict/generate text
 """
 
@@ -76,7 +76,7 @@ def create_sequences(tokens, tok_to_idx, seq_len):
 		sequences.append(seq)
 		targets.append(targ)
 
-	#-------------------------------------------
+	#one-hot encoding (more like one hot mess)
 	x = np.zeros((len(sequences), seq_len, len(tokens)), dtype = np.float32)
 	y = np.zeros((len(sequences), len(tokens)), dtype = np.float32)
 
@@ -125,7 +125,7 @@ def training(model, sequence, target, n_epochs, learn_rate):
 
 	for epoch in range(n_epochs):
 		output, hidden = model.forward(sequence) #forward
-		# loss = criterion(output, target.view(-1).long())
+		#loss = criterion(output, target.view())
 		# loss.backward()
 		# optimizer.step()
 
