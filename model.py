@@ -63,7 +63,8 @@ def text_to_idx_dict(tokens):
 
 	return idx_to_tok, tok_to_idx
 
-def create_sequences(tokens, tok_to_idx, seq_len):
+
+def create_sequences(tokens, seq_len):
 	"""create seq_len sized chunks of text & binary encode them"""
 	sequences = []
 	targets = []
@@ -76,6 +77,22 @@ def create_sequences(tokens, tok_to_idx, seq_len):
 		sequences.append(seq)
 		targets.append(targ)
 
+	return sequences, targets
+
+# def create_sequences(tokens, tok_to_idx, seq_len):
+# 	"""create seq_len sized chunks of text & binary encode them"""
+# 	sequences = []
+# 	targets = []
+# 	max_wordlen = len(max(tokens, key = len))
+
+# 	for i in range(seq_len, len(tokens)):
+# 		seq = tokens[i - seq_len: i]
+# 		targ = tokens[i - seq_len]
+		
+# 		sequences.append(seq)
+# 		targets.append(targ)
+
+def one_hot_encode(sequences, targets, tok_to_idx, seq_len):
 	#one-hot encoding (more like one hot mess)
 	x = np.zeros((len(sequences), seq_len, len(tokens)), dtype = np.float32)
 	y = np.zeros((len(sequences), len(tokens)), dtype = np.float32)
@@ -123,7 +140,7 @@ def training(model, sequence, target, n_epochs, learn_rate):
 	criterion = nn.CrossEntropyLoss()
 	optimizer = torch.optim.Adam(model.parameters(), lr= learn_rate)
 
-	for epoch in range(n_epochs):
+	for epoch in range(1, n_epochs+1):
 		output, hidden = model.forward(sequence) #forward
 		loss = criterion(output, target.long()) #match output data type to target data type
 		loss.backward()
@@ -131,16 +148,26 @@ def training(model, sequence, target, n_epochs, learn_rate):
 
 		if epoch%10 == 0:
 			print("Epoch: {}/{}------Loss: {:.3f}".format(epoch, n_epochs, loss.item()))
+	
+	return model
 
-# def predict(model, idx_to_text, n_words):
-# 	pass
+def predict(model, sequences, idx_to_tok, output_len):
+	model.eval()
+	softmax = nn.Softmax(dim = 1)
+
+	prompt_idx = np.random.randint(0, len(sequences)-1)
+	prompt_txt = sequences[prompt_idx]
+
+	#pass
+
 
 
 	
 if __name__ == '__main__':
 	tokens = extract_text("alice.txt")
-	# tok_size = len(tokens)
+	#tok_size = len(tokens)
 
+	## Testing only 100 tokens first
 	tokens = tokens[0:100]
 	tok_size = len(tokens)
 
@@ -158,12 +185,14 @@ if __name__ == '__main__':
 	print("Size of Vocab: ", vocab_size)
 	print(b)
 
-	x, y = create_sequences(tokens, b, 5)
-	print(x[0:10]) #seq
-	print(y[0:10]) #targ
+	n_len = 5
+	x, y = create_sequences(tokens, n_len)
+	seq, targ = one_hot_encode(x, y, b, n_len)
+	#print(x[0:10]) #seq
+	#print(y[0:10]) #targ
 
-	input_seq = torch.from_numpy(x)
-	targ_seq = torch.Tensor(y)
+	input_seq = torch.from_numpy(seq)
+	targ_seq = torch.Tensor(targ)
 
 	#input_size, hidden_size, output_size, n_layers
 	n_hidden = 12
@@ -174,4 +203,8 @@ if __name__ == '__main__':
 
 	n_epochs = 100
 	learning_rate = 0.01
-	training(rnnModel, input_seq, targ_seq, n_epochs, learning_rate)
+	trained_model = training(rnnModel, input_seq, targ_seq, n_epochs, learning_rate)
+	print(trained_model)
+
+	#model, sequences, idx_to_tok, output_len
+	predict(trained_model, x, a, 10)
