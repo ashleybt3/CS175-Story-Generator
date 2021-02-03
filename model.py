@@ -108,7 +108,7 @@ class modelRNN(nn.Module):
 		hidden = self.initHidden(batch_size)
 
 		output, hidden = self.rnn(x_input, hidden)
-		output = output.contiguous().view(-1, self.hidden_size) ##
+		#output = output.contiguous().view(-1, self.hidden_size) ##
 		output = self.lin(output)
 
 		return output, hidden
@@ -125,12 +125,12 @@ def training(model, sequence, target, n_epochs, learn_rate):
 
 	for epoch in range(n_epochs):
 		output, hidden = model.forward(sequence) #forward
-		#loss = criterion(output, target.view())
-		# loss.backward()
-		# optimizer.step()
+		loss = criterion(output, target.long()) #match output data type to target data type
+		loss.backward()
+		optimizer.step()
 
-		# if epoch%10 == 0:
-		# 	print("Epoch: {}/{}------Loss: {%.3f}".format(epoch, n_epochs, loss.item()))
+		if epoch%10 == 0:
+			print("Epoch: {}/{}------Loss: {:.3f}".format(epoch, n_epochs, loss.item()))
 
 # def predict(model, idx_to_text, n_words):
 # 	pass
