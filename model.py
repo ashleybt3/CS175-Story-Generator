@@ -64,7 +64,7 @@ def text_to_idx_dict(tokens):
 	return idx_to_tok, tok_to_idx
 
 
-def create_sequences(tokens, seq_len):
+def create_sequences(tokens, tok_to_idx, seq_len):
 	"""create seq_len sized chunks of text & binary encode them"""
 	sequences = []
 	targets = []
@@ -72,10 +72,16 @@ def create_sequences(tokens, seq_len):
 
 	for i in range(seq_len, len(tokens)):
 		seq = tokens[i - seq_len: i]
+		#seq = [tok_to_idx[s] for s in seq]
+
 		targ = tokens[i - seq_len]
+		#targ = [tok_to_idx[targ]]
 		
 		sequences.append(seq)
 		targets.append(targ)
+
+	#sequences = np.array(sequences)
+	#targets = np.array(targets)
 
 	return sequences, targets
 
@@ -92,7 +98,7 @@ def create_sequences(tokens, seq_len):
 # 		sequences.append(seq)
 # 		targets.append(targ)
 
-def one_hot_encode(sequences, targets, tok_to_idx, seq_len):
+def one_hot_encode(sequences, targets, tokens, tok_to_idx, seq_len):
 	#one-hot encoding (more like one hot mess)
 	x = np.zeros((len(sequences), seq_len, len(tokens)), dtype = np.float32)
 	y = np.zeros((len(sequences), len(tokens)), dtype = np.float32)
@@ -147,20 +153,55 @@ def training(model, sequence, target, n_epochs, learn_rate):
 		optimizer.step()
 
 		if epoch%10 == 0:
-			print("Epoch: {}/{}------Loss: {:.3f}".format(epoch, n_epochs, loss.item()))
+			print("Epoch: {}/{} ------ Loss: {:.3f}".format(epoch, n_epochs, loss.item()))
 	
 	return model
 
-def predict(model, sequences, idx_to_tok, output_len):
+def encode_prediction(sequence, tokens, tok_to_idx, seq_len):
+	#features = np.zeroes(len(tokens), seq_len, )
+	#print("current sequence: ", sequence)
+	p = np.zeros((len(sequence), seq_len, len(tokens)), dtype = np.float32)
+	for i in range(len(sequence)):
+		for j in range(seq_len):
+	 		p[i, j, tok_to_idx[sequence[i][j]]] = 1
+	# return p
+	return p
+
+def predict(model, tokens, prompt, tok_to_idx, idx_to_tok): #sequences, idx_to_tok, output_len):
+	# model.eval()
+	#softmax = nn.Softmax(dim = 1)
+
+	# prompt_idx = np.random.randint(0, len(sequences)-1)
+	# prompt_txt = sequences[prompt_idx]
+
+	# print("prompting text: ")
+	# print(prompt_txt)
+	prompt_text = [prompt]
+	
+	prompt_text = encode_prediction(prompt_text, tokens, tok_to_idx, len(prompt_text))
+	prompt_text = torch.from_numpy(prompt_text)
+
+	out, hidden = model(prompt_text)
+	
+	probability = nn.functional.softmax(out[-1], dim = 0).data
+	tok_idx = torch.max(probability, dim = 0).values[1].item()
+	#print(tok_idx)
+
+	return idx_to_tok[tok_idx], hidden
+	# return "a", "b"
+
+
+def generate_text(model, tokens, tok_to_idx, idx_to_tok, output_len, input_prompt):
+
 	model.eval()
-	softmax = nn.Softmax(dim = 1)
+	input_prompt = input_prompt.lower()
 
-	prompt_idx = np.random.randint(0, len(sequences)-1)
-	prompt_txt = sequences[prompt_idx]
-
-	#pass
-
-
+	output = [input_prompt]
+	#print("output: ", output)
+	for i in range(output_len):
+		out, hidden = predict(model, tokens, output, tok_to_idx, idx_to_tok)
+		output.append(out)
+	return " ".join(output)
 
 	
 if __name__ == '__main__':
@@ -175,19 +216,15 @@ if __name__ == '__main__':
 	print("Total Tokens: ", tok_size)
 
 
-	a, b = text_to_idx_dict(tokens)
-	# print(a)
-	# print(b)
-	print(len(a)) #idx_to_tok
-	print(len(b)) #tok_to_idx
+	idx_to_tok, tok_to_idx = text_to_idx_dict(tokens)
 
-	vocab_size = len(b)
+	vocab_size = len(tok_to_idx)
 	print("Size of Vocab: ", vocab_size)
-	print(b)
+	print(tok_to_idx)
 
 	n_len = 5
-	x, y = create_sequences(tokens, n_len)
-	seq, targ = one_hot_encode(x, y, b, n_len)
+	x, y = create_sequences(tokens, tok_to_idx, n_len)
+	seq, targ = one_hot_encode(x, y, tokens, tok_to_idx, n_len)
 	#print(x[0:10]) #seq
 	#print(y[0:10]) #targ
 
@@ -206,5 +243,6 @@ if __name__ == '__main__':
 	trained_model = training(rnnModel, input_seq, targ_seq, n_epochs, learning_rate)
 	print(trained_model)
 
-	#model, sequences, idx_to_tok, output_len
-	predict(trained_model, x, a, 10)
+	output_len = 15
+	prediction = generate_text(trained_model, tokens, tok_to_idx, idx_to_tok, output_len, "daisies")
+	print("Prediction: \n", prediction)
