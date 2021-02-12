@@ -38,45 +38,40 @@ initial_words=['and', 'then']
 predict_top_k = 5
 # checkpoint_path='checkpoint'
 
-def get_data(filelist, batch_size, seq_size):
-	words = []
-	for filename in filelist:
-		# get text from data and convert them into ints
-		with open(filename, 'r', encoding = "utf-8") as f:
-			text = f.read()
+def get_data(filename, batch_size, seq_size):
+    # get text from data and convert them into ints
+    with open(filename, 'r') as f:
+        text = f.read()
+    tokens = text.split()
+    # tokenizer to include: alphabet, period
+    # r'[\w.\']+'
+    tokenizer = RegexpTokenizer(r'[\w\']+|\.|\?|\,')
+    words = tokenizer.tokenize(text.lower())
+    print(words[:100])
 
-		tokens = text.split()
-		# tokenizer to include: alphabet, period
-		# r'[\w.\']+'
-		tokenizer = RegexpTokenizer(r'[\w\']+|\.|\?|\,')
-		# words = text.lower().split()
-		tokens = tokenizer.tokenize(text.lower())
-		#print(words[:100])
-		words.extend(tokens)
+    # count how many words there are
+    word_counts = Counter(words)
+    # sort by highest word count
+    sorted_words = sorted(word_counts, key=word_counts.get, reverse=True)
+    # key: int, value: word
+    int_to_word = {k: w for k, w in enumerate(sorted_words)}
+    # key: word, value: int
+    word_to_int = {w: k for k, w in int_to_word.items()}
+    n_vocab = len(int_to_word)
 
-	# count how many words there are
-	word_counts = Counter(words)
-	# sort by highest word count
-	sorted_words = sorted(word_counts, key=word_counts.get, reverse=True)
-	# key: int, value: word
-	int_to_word = {k: w for k, w in enumerate(sorted_words)}
-	# key: word, value: int
-	word_to_int = {w: k for k, w in int_to_word.items()}
-	n_vocab = len(int_to_word)
+    
+    int_text = [word_to_int[w] for w in words]
+    num_batches = int(len(int_text) / (seq_size * batch_size))
+    in_txt = int_text[:num_batches * batch_size * seq_size]
+    out_txt = np.zeros_like(in_txt)
+    out_txt[:-1] = in_txt[1:]
+    out_txt[-1] = in_txt[0]
 
-
-	int_text = [word_to_int[w] for w in words]
-	num_batches = int(len(int_text) / (seq_size * batch_size))
-	in_txt = int_text[:num_batches * batch_size * seq_size]
-	out_txt = np.zeros_like(in_txt)
-	out_txt[:-1] = in_txt[1:]
-	out_txt[-1] = in_txt[0]
-
-	in_txt = np.reshape(in_txt, (batch_size, -1))
-	out_txt = np.reshape(out_txt, (batch_size, -1))
-	# print(in_txt[:100])
-	# print(out_txt[:100])
-	return int_to_word, word_to_int, n_vocab, in_txt, out_txt
+    in_txt = np.reshape(in_txt, (batch_size, -1))
+    out_txt = np.reshape(out_txt, (batch_size, -1))
+    # print(in_txt[:100])
+    # print(out_txt[:100])
+    return int_to_word, word_to_int, n_vocab, in_txt, out_txt
 
 
 
@@ -142,7 +137,7 @@ def predict(device, net, words, n_vocab, word_to_int, int_to_word, top_k=5):
     _, top_ix = torch.topk(output[0], k=top_k)
     choices = top_ix.tolist()
     choice = np.random.choice(choices[0])
-
+    
     words.append(int_to_word[choice])
     for _ in range(100):
         ix = torch.tensor([[choice]]).long().to(device)
@@ -236,4 +231,4 @@ def train_main(filename):
 
 
 if __name__ == '__main__':
-    train_main(['alice.txt', 'red_hen.txt', 'red_riding.txt'])
+    train_main('alice.txt')
