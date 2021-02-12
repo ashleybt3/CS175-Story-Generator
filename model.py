@@ -46,7 +46,6 @@ def get_data(filename, batch_size, seq_size):
     # tokenizer to include: alphabet, period
     # r'[\w.\']+'
     tokenizer = RegexpTokenizer(r'[\w\']+|\.|\?|\,')
-    # words = text.lower().split()
     words = tokenizer.tokenize(text.lower())
     print(words[:100])
 
@@ -138,7 +137,7 @@ def predict(device, net, words, n_vocab, word_to_int, int_to_word, top_k=5):
     _, top_ix = torch.topk(output[0], k=top_k)
     choices = top_ix.tolist()
     choice = np.random.choice(choices[0])
-
+    
     words.append(int_to_word[choice])
     for _ in range(100):
         ix = torch.tensor([[choice]]).to(device)
