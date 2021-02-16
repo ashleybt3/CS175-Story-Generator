@@ -13,7 +13,7 @@ def exec_model():
     model = TFGPT2LMHeadModel.from_pretrained("gpt2", pad_token_id=tokenizer.eos_token_id)
 
     # encode context the generation is conditioned on
-    input_ids = tokenizer.encode('Today was a', return_tensors='tf')
+    input_ids = tokenizer.encode('On a dark and stormy night', return_tensors='tf')
 
     # generate text until the output length (which includes the context length) reaches 50
     greedy_output = model.generate(input_ids, max_length=50)
@@ -33,7 +33,7 @@ def exec_model():
     sample_outputs = model.generate(
         input_ids,
         do_sample=True, 
-        max_length=50, 
+        max_length=250, 
         # TopK sampling
         top_k=50, 
         # TopP sampling
