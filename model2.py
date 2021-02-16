@@ -1,4 +1,5 @@
 import tensorflow as tf
+import time
 from transformers import TFGPT2LMHeadModel, GPT2Tokenizer
 
 
@@ -13,7 +14,8 @@ def run():
     run = True
     while(run):
         global user_input
-        user_input = input("> ")
+        
+        user_input =  input("> ")
         if (user_input == "quit"):
             run = False
         elif(user_input == "story"):
@@ -24,6 +26,7 @@ def run():
 def exec_model():
     # encode context the generation is conditioned on
     global user_input
+    start = time.time()
     input_ids = tokenizer.encode(user_input, return_tensors='tf')
     # generate text until the output length (which includes the context length) reaches 50
     greedy_output = model.generate(input_ids, max_length=50)
@@ -66,8 +69,11 @@ def exec_model():
     
     output = tokenizer.decode(sample_outputs[0], skip_special_tokens=True)
     global story
-    story += output
+    user_input += output
+    story = story + " " + output
+    end = time.time()
     print(output)
+    print("time: ", end - start)
 
 if __name__ == "__main__":
     print(100 * '-')
