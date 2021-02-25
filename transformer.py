@@ -1,60 +1,73 @@
 import tensorflow as tf
 from transformers import TFGPT2LMHeadModel, GPT2Tokenizer
+import time
 
+model = TFGPT2LMHeadModel.from_pretrained("C:/Users/tiffany/Desktop/CS175-Story-Generator/output_clm", from_pt = True)
+tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
 
-# source: https://huggingface.co/blog/how-to-generate
+#input_ids = tokenizer.encode("Once upon a time", return_tensors='tf')
 
+user_input = "Once upon a time"
+story = ""
 
+def run():
+    run = True
+    while(run):
+        global user_input
+        user_input =  input("> ")
+        if (user_input == "quit"):
+            run = False
+        elif(user_input == "story"):
+            print(story)
+        else:
+            exec_model()
 
 def exec_model():
-    tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
+	# encode context the generation is conditioned on
+    global user_input
+    start = time.time()
+    
+    input_ids = tokenizer.encode(user_input, return_tensors='tf')
 
-    # add the EOS token as PAD token to avoid warnings
-    model = TFGPT2LMHeadModel.from_pretrained("gpt2", pad_token_id=tokenizer.eos_token_id)
-
-    # encode context the generation is conditioned on
-    input_ids = tokenizer.encode('On a dark and stormy night', return_tensors='tf')
-
+    # input_ids = tokenizer(user, return_tensors="pt").input_ids
     # generate text until the output length (which includes the context length) reaches 50
     greedy_output = model.generate(input_ids, max_length=50)
 
-
-    # METHODS:
-    # - Greedy Search
-    # - Beam Search
-    # - Sampling
-    # - TopK Sampling
-    # - TopP(nucleus) Sampling
-
     # set seed to reproduce results. Feel free to change the seed though to get different results
-    tf.random.set_seed(0)
+    # tf.random.uniform([1], seed=1)
+    tf.random.set_seed(1)
 
     # set top_k = 50 and set top_p = 0.95 and num_return_sequences = 3
     sample_outputs = model.generate(
         input_ids,
-        do_sample=True, 
-        max_length=250, 
-        # TopK sampling
-        top_k=50, 
-        # TopP sampling
-        top_p=0.95, 
-        # number of highest scoring beams
-        num_return_sequences=3,
-
-        # Beam Search
-        num_beams = 5,
-        no_repeat_ngram_size=3,
-        early_stopping = True
+        max_length=100,  
+        min_length = 100,
+	    num_return_sequences=5,
+	    no_repeat_ngram_size=2,
+	    repetition_penalty=1.5,
+	    top_p=0.92,
+	    temperature=.85,
+	    do_sample=True,
+	    top_k=125,
+	    early_stopping=True
     )
 
     # prints the top n sequences
-    print("Output:\n" + 100 * '-')
-    for i, sample_output in enumerate(sample_outputs):
-        print("{}: {}".format(i, tokenizer.decode(sample_output, skip_special_tokens=True)))
+    # print("Output:\n" + 100 * '-')
+    # for i, sample_output in enumerate(sample_outputs):
+    #     print("{}: {}".format(i, tokenizer.decode(sample_output, skip_special_tokens=True)))
 
     # prints the top sequence
-    # print("Output:\n" + 100 * '-')
-    # print(tokenizer.decode(sample_outputs[0], skip_special_tokens=True))
+    next_phrase = max(sample_outputs, key = len)
+    output = tokenizer.decode(next_phrase, skip_special_tokens=True)
+    global story
+    story = story + " " + output
+    end = time.time()
+    print(output)
+    
+    print("time: {:.2f} seconds".format(end - start))
 
 if __name__ == "__main__":
-    exec_model()
+	print(100 * "-")
+	exec_model()
+	run()
