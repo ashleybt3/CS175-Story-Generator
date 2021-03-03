@@ -4,6 +4,9 @@ import time
 import numpy
 import random
 
+import language_tool_python
+
+
 tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
 model = TFGPT2LMHeadModel.from_pretrained("C:/Users/tiffany/Desktop/CS175-Story-Generator/output_clm", from_pt = True)
 
@@ -29,6 +32,8 @@ def run():
 		    exec_model()
 
 def exec_model():
+	tool = language_tool_python.LanguageTool('en-US')
+
 	# encode context the generation is conditioned on
 	global user_input
 	start = time.time()
@@ -41,23 +46,31 @@ def exec_model():
 
 	# set seed to reproduce results. Feel free to change the seed though to get different results
 	# tf.random.uniform([1], seed=1)
-	#tf.random.set_seed(1)
+	tf.random.set_seed(0)
 
 	# set top_k = 50 and set top_p = 0.95 and num_return_sequences = 3
 	sample_outputs = model.generate(
 		input_ids,
-		max_length=100,  
-		min_length = 100,
-		num_return_sequences=10,
-		no_repeat_ngram_size=2,
-		repetition_penalty=1.5,
-		top_p=0.92,
-		temperature=.85,
-		do_sample=True,
-		top_k=125,
-		early_stopping=True,
+		# max_length=100,  
+		# min_length = 100,
+		# num_return_sequences=10,
+		# no_repeat_ngram_size=2,
+		# repetition_penalty=1.5,
+		# top_p=0.92,
+		# temperature=.85,
+		# do_sample=True,
+		# top_k=125,
+		# early_stopping=True,
 
-		pad_token_id = None
+		do_sample = True,
+		max_length = 100,
+		top_p = 0.92,
+		top_k = 125,
+		no_repeat_ngram_size = 2,
+		num_return_sequences = 10,
+		repetition_penalty = 1.5,
+		temperature = 0.7
+
 	)
 
 	# prints the top n sequences
@@ -71,7 +84,10 @@ def exec_model():
 	global story
 	story = story + " " + output
 	end = time.time()
-	print("----------output----------:\n" + output + "\n")
+	print("----------output----------:\n")
+	matches = tool.check(output)
+	output = tool.correct(output)
+	print(output)
 
 	print("time: {:.2f} seconds".format(end - start))
 
