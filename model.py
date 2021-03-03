@@ -12,6 +12,7 @@ from nltk.tokenize import RegexpTokenizer
 import string
 from collections import Counter
 
+import time
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -34,9 +35,32 @@ batch_size = 16
 embedding_size = 64
 lstm_size = 64
 gradients_norm = 5
-initial_words=['and', 'then']
+initial_words= ['Once', 'upon', 'a', 'time']
+story = ''
 predict_top_k = 5
 # checkpoint_path='checkpoint'
+
+
+device = None
+net = None
+n_vocab = None
+word_to_int = None
+int_to_word = None 
+
+
+
+def run():
+    run = True
+    while(run):
+        global initial_words
+        initial_words =  input("> ").split()
+        if (initial_words[0] == "quit"):
+            run = False
+        elif(initial_words[0] == "story"):
+            print(story)
+        else:
+            exec_model()
+
 
 def get_data(filename, batch_size, seq_size):
     # get text from data and convert them into ints
@@ -44,10 +68,9 @@ def get_data(filename, batch_size, seq_size):
         text = f.read()
     tokens = text.split()
     # tokenizer to include: alphabet, period
-    # r'[\w.\']+'
     tokenizer = RegexpTokenizer(r'[\w\']+|\.|\?|\,')
-    words = tokenizer.tokenize(text.lower())
-    print(words[:100])
+    words = tokenizer.tokenize(text)
+    print(len(tokens))
 
     # count how many words there are
     word_counts = Counter(words)
@@ -69,19 +92,13 @@ def get_data(filename, batch_size, seq_size):
 
     in_txt = np.reshape(in_txt, (batch_size, -1))
     out_txt = np.reshape(out_txt, (batch_size, -1))
-    # print(in_txt[:100])
-    # print(out_txt[:100])
     return int_to_word, word_to_int, n_vocab, in_txt, out_txt
-
-
-
     
 def get_batches(in_txt, out_txt, batch_size, seq_size):
     # creates batches
     n_batches = np.prod(in_txt.shape) // (seq_size * batch_size)
     for i in range(0, n_batches * seq_size, seq_size):
         yield in_txt[:, i:i+seq_size], out_txt[:, i:i+seq_size]
-
 
 class RnnModel(nn.Module):
     def __init__(self,n_vocab, seq_size, embedding_size, lstm_size):
@@ -107,9 +124,9 @@ class RnnModel(nn.Module):
     def zero_state(self, batch_size):
         return (torch.zeros(1, batch_size, self.lstm_size),
                 torch.zeros(1, batch_size, self.lstm_size))
-
     
 def get_loss_and_train(net, lr = 0.001):
+    
     # goal: tweak and change the weights of model to try and minimize the loss function
     # Log Loss (Cross Entropy Loss)
     # criterion: shows predictions from model, the lower the better
@@ -120,12 +137,9 @@ def get_loss_and_train(net, lr = 0.001):
     optimizer = torch.optim.Adam(net.parameters(), lr = lr)
     return criterion, optimizer
 
-
 def predict(device, net, words, n_vocab, word_to_int, int_to_word, top_k=5):
-    
     # turns off gradients
     net.eval()
-
     # hidden state and cell states are initialized back to zero
     state_h, state_c = net.zero_state(1)
     state_h = state_h.to(device)
@@ -147,13 +161,16 @@ def predict(device, net, words, n_vocab, word_to_int, int_to_word, top_k=5):
         choices = top_ix.tolist()
         choice = np.random.choice(choices[0])
         words.append(int_to_word[choice])
-
+    global story
+    story += ' '.join(words)
     print(' '.join(words))
 
+def exec_model():
+    global device, net, initial_words, n_vocab, word_to_int, int_to_word
+    predict(device, net, initial_words, n_vocab, word_to_int, int_to_word, 5)
 
-
-def train_main(filename):
-    
+def train_model(filename):
+    global device, net, initial_words, n_vocab, word_to_int, int_to_word
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     # int_to_word: int to word dictionary
     # word_to_intn: word to int dictionary
@@ -161,36 +178,31 @@ def train_main(filename):
     # - could be embeddings or one-hot encodings
     # out_txt: ...
     int_to_word, word_to_int, n_vocab, in_txt, out_txt = get_data(filename, batch_size, seq_size)
+    
 
     # create RNN Model and write that model to device
     net = RnnModel(n_vocab, seq_size, embedding_size, lstm_size)
     net = net.to(device)
 
-    
     # criterion: shows predictions from model, the lower the better
     # optimizer: updates the model in response to the output of the loss function and tells you if it's moving in the right or wrong direction
     # learning rate: multiply the gradients to scale them; stpes to converge to an optimum, the smaller the better
     # loss function: measures how wrong the predictions are
     criterion, optimizer = get_loss_and_train(net, 0.01)
-
     iteration = 0
     # epoch: defines the number times that the learning algorithm will work through the entire training dataset
     # - epoch with one batch is batch gradient descent learning algorithm
     # - sizes = [10, 100, 500, 1000, etc.]
     # - number of epochs is the number of complete passes through the training dataset
-    for epoch in range(50):
+    for epoch in range(10):
         # batch size (group size): hyperparameter that defines the number of samples to work through before updating
         # -  1 ≤ size of batch ≤ # of samples in the training dataset
-
-
         batches = get_batches(in_txt, out_txt, batch_size, seq_size)
         # cell state: long term mem capability that stores and loads information of not necessarily immediately previous events
         # - present in LSTMs
         # hidden state: working mem capability that carries info from immediately previous events and overwrites at every step uncontrollably
         # - present at RNNs and LSTMs
         state_h, state_c = net.zero_state(batch_size)
-
-
         state_h = state_h.to(device)
         state_c = state_c.to(device)
         # iterates over batch of samples, where one batch has the specified batch size number of samples
@@ -217,18 +229,20 @@ def train_main(filename):
 
             optimizer.step() # updates weights accordingly
 
-            if iteration % 100 == 0:
-                print('Epoch: {}/{}'.format(epoch, 10),
-                      'Iteration: {}'.format(iteration),
-                      'Loss: {}'.format(loss_value))
+            # if iteration % 100 == 0:
+            #     print('Epoch: {}/{}'.format(epoch, 10),
+            #           'Iteration: {}'.format(iteration),
+            #           'Loss: {}'.format(loss_value))
 
-            if iteration % 1000 == 0:
-                predict(device, net, initial_words, n_vocab,
-                        word_to_int, int_to_word, top_k=5)
+            # if iteration % 1000 == 0:
+            #     predict(device, net, initial_words, n_vocab,
+            #             word_to_int, int_to_word, top_k=5)
                 # torch.save(net.state_dict(),
                 #            'checkpoint_pt/model-{}.pth'.format(iteration))
 
 
-
 if __name__ == '__main__':
-    train_main('shorts.txt')
+    train_model('grims.txt')
+    exec_model()
+    run()
+    
