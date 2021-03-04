@@ -10,8 +10,6 @@ import language_tool_python
 tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
 model = TFGPT2LMHeadModel.from_pretrained("C:/Users/tiffany/Desktop/CS175-Story-Generator/output_clm", from_pt = True)
 
-#input_ids = tokenizer.encode("Once upon a time", return_tensors='tf')
-
 user_input = "Once upon a time"
 story = ""
 
@@ -19,36 +17,38 @@ def run():
 	run = True
 	while(run):
 		global user_input
-		print("----------enter any text to continue the story, try to avoid periods\nif you must close a sentence, start the next with a few words----------\n")
-		user_input =  input("> ")
-
-		if (user_input == "quit"):
+		print('-----INSTRUCTIONS:-----\n * Enter any text to continue the story\n * Avoid closing sentence(".", "!", "?") if possible\n * If you must close a sentence, start a new sentence with a few words\n--------------------------\n')
+		#user_input =  input("> ")
+		new_input = input("> ")
+		user_input = user_input + " " + new_input
+		if (new_input == "quit"):
 		    run = False
-		elif (user_input == "story"):
+		elif (new_input == "story"):
 		    print(story)
-		elif (user_input == "\n"):
-			print("invalid, please enter text")
+		    print()
+		elif (new_input == "\n"):
+			print("invalid, please enter text\n")
 		else:
 		    exec_model()
 
 def exec_model():
+	global user_input
+	print("\n---generating output in progress---")
+	print("user_input: ", user_input)
 	tool = language_tool_python.LanguageTool('en-US')
 
-	# encode context the generation is conditioned on
-	global user_input
 	start = time.time()
 
 	input_ids = tokenizer.encode(user_input, return_tensors='tf')
 
 	# input_ids = tokenizer(user, return_tensors="pt").input_ids
 	# generate text until the output length (which includes the context length) reaches 50
-	greedy_output = model.generate(input_ids, max_length=50)
+	greedy_output = model.generate(input_ids, max_length=len(user_input))
 
 	# set seed to reproduce results. Feel free to change the seed though to get different results
 	# tf.random.uniform([1], seed=1)
 	tf.random.set_seed(0)
 
-	# set top_k = 50 and set top_p = 0.95 and num_return_sequences = 3
 	sample_outputs = model.generate(
 		input_ids,
 		# max_length=100,  
@@ -73,23 +73,25 @@ def exec_model():
 
 	)
 
-	# prints the top n sequences
-	# print("Output:\n" + 100 * '-')
-	# for i, sample_output in enumerate(sample_outputs):
-	#     print("{}: {}".format(i, tokenizer.decode(sample_output, skip_special_tokens=True)))
-
-	# prints the top sequence
+	# prints the random sequence
 	next_phrase = random.choice(sample_outputs) #max(sample_outputs, key = len)
 	output = tokenizer.decode(next_phrase, skip_special_tokens=True)
 	global story
 	story = story + " " + output
+
+	#model cannot process too big of output, take only last 10 words
+	#average words in sentence = 15-20 (10 words from original output + (~5-10) words from user_input)
+	user_input = output#" ".join(output.split()[-10:]) 
+	#print("updated user_input: ", user_input)
 	end = time.time()
-	print("----------output----------:\n")
+
+	print("\nthe story so far=========:")
 	matches = tool.check(output)
 	output = tool.correct(output)
 	print(output)
 
 	print("time: {:.2f} seconds".format(end - start))
+	print()
 
 if __name__ == "__main__":
 
