@@ -91,7 +91,7 @@ def exec_model():
 
 	# input_ids = tokenizer(user, return_tensors="pt").input_ids
 	# generate text until the output length (which includes the context length) reaches 50
-	greedy_output = model.generate(input_ids, max_length=len(user_input))
+	#greedy_output = model.generate(input_ids, max_length=len(user_input))
 
 	# set seed to reproduce results. Feel free to change the seed though to get different results
 	# tf.random.uniform([1], seed=1)
@@ -111,7 +111,8 @@ def exec_model():
 		# early_stopping=True,
 
 		do_sample = True,
-		max_length = 100,
+		max_length = 10000,
+		min_length = 50,
 		top_p = 0.92,
 		top_k = 125,
 		no_repeat_ngram_size = 2,
@@ -131,15 +132,17 @@ def exec_model():
 
 	#model cannot process too big of output, take only last 10 words
 	#average words in sentence = 15-20 (10 words from original output + (~5-10) words from user_input)
-	user_input = best_output#" ".join(output.split()[-10:]) 
+	#user_input = best_output#" ".join(output.split()[-10:]) 
 	#print("updated user_input: ", user_input)
-	end = time.time()
+	
 
 	print("\nthe story so far=========:")
 	matches = tool.check(best_output)
 	best_output = tool.correct(best_output)
 	print(best_output)
-
+	user_input = best_output
+	
+	end = time.time()
 	print("time: {:.2f} seconds".format(end - start))
 	print()
 
