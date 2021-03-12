@@ -1,0 +1,113 @@
+(tf_env) C:\Users\tiffany\Desktop\CS175-Story-Generator>python transformer.py
+2021-03-11 16:42:41.237120: I tensorflow/core/platform/cpu_feature_guard.cc:142] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN)to use the following CPU instructions in performance-critical operations:  AVX AVX2
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2021-03-11 16:42:41.263605: W tensorflow/python/util/util.cc:348] Sets are not currently considered sequences, but this may change in the future, so consider avoiding using them.
+Some weights of the PyTorch model were not used when initializing the TF 2.0 model TFGPT2LMHeadModel: ['transformer.h.6.attn.masked_bias', 'transformer.h.18.attn.masked_bias', 'transformer.h.14.attn.masked_bias', 'transformer.h.8.attn.masked_bias', 'transformer.h.20.attn.masked_bias', 'transformer.h.4.attn.masked_bias', 'transformer.h.9.attn.masked_bias', 'lm_head.weight', 'transformer.h.17.attn.masked_bias', 'transformer.h.15.attn.masked_bias', 'transformer.h.3.attn.masked_bias', 'transformer.h.2.attn.masked_bias', 'transformer.h.16.attn.masked_bias', 'transformer.h.0.attn.masked_bias', 'transformer.h.7.attn.masked_bias', 'transformer.h.23.attn.masked_bias', 'transformer.h.21.attn.masked_bias', 'transformer.h.11.attn.masked_bias', 'transformer.h.13.attn.masked_bias', 'transformer.h.1.attn.masked_bias', 'transformer.h.19.attn.masked_bias', 'transformer.h.12.attn.masked_bias', 'transformer.h.10.attn.masked_bias', 'transformer.h.5.attn.masked_bias', 'transformer.h.22.attn.masked_bias']
+- This IS expected if you are initializing TFGPT2LMHeadModel from a PyTorch model trained on another task or with another architecture (e.g. initializing a TFBertForSequenceClassification model from a BertForPreTraining model).
+- This IS NOT expected if you are initializing TFGPT2LMHeadModel from a PyTorch model that you expect to be exactly identical (e.g. initializing a TFBertForSequenceClassification model from a BertForSequenceClassification model).
+All the weights of TFGPT2LMHeadModel were initialized from the PyTorch model.
+If your task is similar to the task the model of the checkpoint was trained on, you can already use TFGPT2LMHeadModel for predictions without further training.
+----------------------------------------------------------------------------------------------------
+-----INSTRUCTIONS:-----
+ * Enter any text after the ">" prompt to continue the story
+ * Avoid closing sentence(".", "!", "?") if possible
+ * If you must close a sentence, start a new sentence with a few words
+ * To exit the process, please enter "quit" at the next input
+-----------------------
+
+
+========In process of generating output...========
+Setting `pad_token_id` to 50256 (first `eos_token_id`) to generate sequence
+finding back up: Once upon a time,  there was an old king who had two daughters.
+
+
+========Story Output:========:
+Once upon a time, there was an old king who had two daughters.
+time to generate text: 22.27 seconds
+
+> The king was very proud of his daughters because they were
+
+========In process of generating output...========
+Setting `pad_token_id` to 50256 (first `eos_token_id`) to generate sequence
+
+
+========Story Output:========:
+Once upon a time, there was an old king who had two daughters. The king was very proud of his daughters because they were beautiful and could talk.
+time to generate text: 50.70 seconds
+
+> The king
+
+========In process of generating output...========
+Setting `pad_token_id` to 50256 (first `eos_token_id`) to generate sequence
+
+
+========Story Output:========:
+Once upon a time, there was an old king who had two daughters. The king was very proud of his daughters because they were beautiful and could talk. The king wanted to have one, but he did not know how to get it.
+time to generate text: 45.41 seconds
+
+> Therefore, the princesses decided to
+
+========In process of generating output...========
+Setting `pad_token_id` to 50256 (first `eos_token_id`) to generate sequence
+
+
+========Story Output:========:
+Once upon a time, there was an old king who had two daughters. The king was very proud of his daughters because they were beautiful and could talk. The king wanted to have one, but he did not know how to get it. Therefore, the princesses decided to give him only what she asked for:
+time to generate text: 40.29 seconds
+
+> a golden ring which would give the king the power to have what he wanted. They set out
+
+========In process of generating output...========
+Setting `pad_token_id` to 50256 (first `eos_token_id`) to generate sequence
+
+
+========Story Output:========:
+Once upon a time, there was an old king who had two daughters. The king was very proud of his daughters because they were beautiful and could talk. The king wanted to have one, but he did not know how to get it. Therefore, the princesses decided to give him only what she asked for: a golden ring which would give the king the power to have what he wanted. They set out with this as their sole object; so off went her father.
+time to generate text: 43.46 seconds
+
+> The king was worried for their safety, so he sent along
+
+========In process of generating output...========
+Setting `pad_token_id` to 50256 (first `eos_token_id`) to generate sequence
+
+
+========Story Output:========:
+Once upon a time, there was an old king who had two daughters. The king was very proud of his daughters because they were beautiful and could talk. The king wanted to have one, but he did not know how to get it. Therefore, the princesses decided to give him only what she asked for: a golden ring which would give the king the power to have what he wanted. They set out with this as their sole object; so off went her father. The king was worried about their safety, so he sent along three soldiers every day until all that should be left in them became.
+time to generate text: 53.48 seconds
+
+> On their journey, the princesses encountered
+
+========In process of generating output...========
+Setting `pad_token_id` to 50256 (first `eos_token_id`) to generate sequence
+2021-03-11 16:53:01.003530: W tensorflow/core/framework/cpu_allocator_impl.cc:81] Allocation of 259326120 exceeds 10% of free system memory.
+
+
+========Story Output:========:
+Once upon a time, there was an old king who had two daughters. The king was very proud of his daughters because they were beautiful and could talk. The king wanted to have one, but he did not know how to get it. Therefore, the princesses decided to give him only what she asked for: a golden ring which would give the king the power to have what he wanted. They set out with this as their sole object; so off went her father. The king was worried about their safety, so he sent along three soldiers every day until all that should be left in them became. On their journey, the princesses encountered another giant whose name stood above everything else on earth.”
+time to generate text: 59.38 seconds
+
+> The princesses were scared because the giant was
+
+========In process of generating output...========
+Setting `pad_token_id` to 50256 (first `eos_token_id`) to generate sequence
+2021-03-11 16:55:06.818810: W tensorflow/core/framework/cpu_allocator_impl.cc:81] Allocation of 303552280 exceeds 10% of free system memory.
+
+
+========Story Output:========:
+Once upon a time, there was an old king who had two daughters. The king was very proud of his daughters because they were beautiful and could talk. The king wanted to have one, but he did not know how to get it. Therefore, the princesses decided to give him only what she asked for: a golden ring which would give the king the power to have what he wanted. They set out with this as their sole object; so off went her father. The king was worried about their safety, so he sent along three soldiers every day until all that should be left in them became. On their journey, the princesses encountered another giant whose name stood above everything else on earth.” The princesses were scared because the giant was bigger than any other thing ever seen before or since! So when.
+time to generate text: 86.06 seconds
+
+> They encountered the giant, they ran home.
+
+========In process of generating output...========
+Setting `pad_token_id` to 50256 (first `eos_token_id`) to generate sequence
+2021-03-11 16:57:29.880893: W tensorflow/core/framework/cpu_allocator_impl.cc:81] Allocation of 349788720 exceeds 10% of free system memory.
+
+
+========Story Output:========:
+Once upon a time, there was an old king who had two daughters. The king was very proud of his daughters because they were beautiful and could talk. The king wanted to have one, but he did not know how to get it. Therefore, the princesses decided to give him only what she asked for: a golden ring which would give the king the power to have what he wanted. They set out with this as their sole object; so off went her father. The king was worried about their safety, so he sent along three soldiers every day until all that should be left in them became. On their journey, the princesses encountered another giant whose name stood above everything else on earth.” The princesses were scared because the giant was bigger than any other thing ever seen before or since! So when. They encountered the giant, they ran home.
+time to generate text: 32.55 seconds
+
+> quit
+
+(tf_env) C:\Users\tiffany\Desktop\CS175-Story-Generator>
