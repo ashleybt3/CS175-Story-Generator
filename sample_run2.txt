@@ -1,0 +1,145 @@
+(tf_env) C:\Users\tiffany\Desktop\CS175-Story-Generator>python transformer.py
+2021-03-12 11:10:00.337407: I tensorflow/core/platform/cpu_feature_guard.cc:142] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN)to use the following CPU instructions in performance-critical operations:  AVX AVX2
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2021-03-12 11:10:00.388870: W tensorflow/python/util/util.cc:348] Sets are not currently considered sequences, but this may change in the future, so consider avoiding using them.
+Some weights of the PyTorch model were not used when initializing the TF 2.0 model TFGPT2LMHeadModel: ['transformer.h.1.attn.masked_bias', 'transformer.h.13.attn.masked_bias', 'transformer.h.14.attn.masked_bias', 'transformer.h.18.attn.masked_bias', 'transformer.h.10.attn.masked_bias', 'transformer.h.15.attn.masked_bias', 'transformer.h.6.attn.masked_bias', 'transformer.h.12.attn.masked_bias', 'transformer.h.22.attn.masked_bias', 'transformer.h.7.attn.masked_bias', 'transformer.h.23.attn.masked_bias', 'transformer.h.0.attn.masked_bias', 'transformer.h.11.attn.masked_bias', 'transformer.h.20.attn.masked_bias', 'transformer.h.5.attn.masked_bias', 'transformer.h.19.attn.masked_bias', 'transformer.h.16.attn.masked_bias', 'transformer.h.8.attn.masked_bias', 'transformer.h.21.attn.masked_bias', 'lm_head.weight', 'transformer.h.17.attn.masked_bias', 'transformer.h.3.attn.masked_bias', 'transformer.h.4.attn.masked_bias', 'transformer.h.2.attn.masked_bias', 'transformer.h.9.attn.masked_bias']
+- This IS expected if you are initializing TFGPT2LMHeadModel from a PyTorch model trained on another task or with another architecture (e.g. initializing a TFBertForSequenceClassification model from a BertForPreTraining model).
+- This IS NOT expected if you are initializing TFGPT2LMHeadModel from a PyTorch model that you expect to be exactly identical (e.g. initializing a TFBertForSequenceClassification model from a BertForSequenceClassification model).
+All the weights of TFGPT2LMHeadModel were initialized from the PyTorch model.
+If your task is similar to the task the model of the checkpoint was trained on, you can already use TFGPT2LMHeadModel for predictions without further training.
+----------------------------------------------------------------------------------------------------
+-----INSTRUCTIONS:-----
+ * Enter any text after the ">" prompt to continue the story
+ * Avoid closing sentence(".", "!", "?") if possible
+ * If you must close a sentence, start a new sentence with a few words
+ * To exit the process, please enter "quit" at the next input
+-----------------------
+
+
+========In process of generating output...========
+Setting `pad_token_id` to 50256 (first `eos_token_id`) to generate sequence
+finding back up: Once upon a time,  there was an old king who had two daughters.
+
+
+========Story Output:========:
+Once upon a time, there was an old king who had two daughters.
+time to generate text: 21.12 seconds
+
+> His daughters were known for
+
+========In process of generating output...========
+Setting `pad_token_id` to 50256 (first `eos_token_id`) to generate sequence
+
+
+========Story Output:========:
+Once upon a time, there was an old king who had two daughters. His daughters were known for their beauty, and they lived in the same house as his other three maids.
+time to generate text: 46.86 seconds
+
+> The king
+
+========In process of generating output...========
+Setting `pad_token_id` to 50256 (first `eos_token_id`) to generate sequence
+
+
+========Story Output:========:
+Once upon a time, there was an old king who had two daughters. His daughters were known for their beauty, and they lived in the same house as his other three maids. The king wanted to have one of them married; but he could not get her out from under him without leaving behind such money that it would be better off having both.
+time to generate text: 81.13 seconds
+
+> Little did he know, his daughter was in love with
+
+========In process of generating output...========
+Setting `pad_token_id` to 50256 (first `eos_token_id`) to generate sequence
+
+
+========Story Output:========:
+Once upon a time, there was an old king who had two daughters. His daughters were known for their beauty, and they lived in the same house as his other three maids. The king wanted to have one of them married; but he could not get her out from under him without leaving behind such money that it would be better off having both. Little did he know, his daughter was in love with another.
+time to generate text: 35.04 seconds
+
+> Therefore, the king devised to
+
+========In process of generating output...========
+Setting `pad_token_id` to 50256 (first `eos_token_id`) to generate sequence
+
+
+========Story Output:========:
+Once upon a time, there was an old king who had two daughters. His daughters were known for their beauty, and they lived in the same house as his other three maids. The king wanted to have one of them married; but he could not get her out from under him without leaving behind such money that it would be better off having both. Little did he know, his daughter was in love with another. Therefore, the king devised to give away all which belonged unto either or neither until she should marry
+time to generate text: 47.56 seconds
+
+> However, the daughter did not want the king to
+
+========In process of generating output...========
+Setting `pad_token_id` to 50256 (first `eos_token_id`) to generate sequence
+2021-03-12 11:17:37.875182: W tensorflow/core/framework/cpu_allocator_impl.cc:81] Allocation of 227161640 exceeds 10% of free system memory.
+
+
+========Story Output:========:
+Once upon a time, there was an old king who had two daughters. His daughters were known for their beauty, and they lived in the same house as his other three maids. The king wanted to have one of them married; but he could not get her out from under him without leaving behind such money that it would be better off having both. Little did he know, his daughter was in love with another. Therefore, the king devised to give away all which belonged unto either or neither until she should marry However, the daughter did not want the king to take back what came into play between himself And now you will see why I am talking about making sure
+time to generate text: 56.58 seconds
+
+> that I am not wrong. The daughter pleaded with the king to change his mind, but
+
+========In process of generating output...========
+Setting `pad_token_id` to 50256 (first `eos_token_id`) to generate sequence
+2021-03-12 11:19:41.031065: W tensorflow/core/framework/cpu_allocator_impl.cc:81] Allocation of 303552280 exceeds 10% of free system memory.
+
+
+========Story Output:========:
+Once upon a time, there was an old king who had two daughters. His daughters were known for their beauty, and they lived in the same house as his other three maids. The king wanted to have one of them married; but he could not get her out from under him without leaving behind such money that it would be better off having both. Little did he know, his daughter was in love with another. Therefore, the king devised to give away all which belonged unto either or neither until she should marry However, the daughter did not want the king to take back what came into play between himself And now you will see why I am talking about making sure that I am not wrong. The daughter pleaded with the king to change his mind, but nothing seemed likely enough.
+time to generate text: 67.51 seconds
+
+> The daughter, unhappy with her father's decision, decided to run away with her lover. They ran to
+
+========In process of generating output...========
+Setting `pad_token_id` to 50256 (first `eos_token_id`) to generate sequence
+2021-03-12 11:22:26.074296: W tensorflow/core/framework/cpu_allocator_impl.cc:81] Allocation of 355819560 exceeds 10% of free system memory.
+
+
+========Story Output:========:
+Once upon a time, there was an old king who had two daughters. His daughters were known for their beauty, and they lived in the same house as his other three maids. The king wanted to have one of them married; but he could not get her out from under him without leaving behind such money that it would be better off having both. Little did he know, his daughter was in love with another. Therefore, the king devised to give away all which belonged unto either or neither until she should marry However, the daughter did not want the king to take back what came into play between himself And now you will see why I am talking about making sure that I am not wrong. The daughter pleaded with the king to change his mind, but nothing seemed likely enough. The daughter, unhappy with her father's decision, decided to run away with her lover. They ran to where Uncle Bear lives nearby
+time to generate text: 43.71 seconds
+
+> and her provided shelter and food for them. Uncle Bear was a
+
+========In process of generating output...========
+Setting `pad_token_id` to 50256 (first `eos_token_id`) to generate sequence
+2021-03-12 11:24:16.050475: W tensorflow/core/framework/cpu_allocator_impl.cc:81] Allocation of 392004600 exceeds 10% of free system memory.
+
+
+========Story Output:========:
+Once upon a time, there was an old king who had two daughters. His daughters were known for their beauty, and they lived in the same house as his other three maids. The king wanted to have one of them married; but he could not get her out from under him without leaving behind such money that it would be better off having both. Little did he know, his daughter was in love with another. Therefore, the king devised to give away all which belonged unto either or neither until she should marry However, the daughter did not want the king to take back what came into play between himself And now you will see why I am talking about making sure that I am not wrong. The daughter pleaded with the king to change his mind, but nothing seemed likely enough. The daughter, unhappy with her father's decision, decided to run away with her lover. They ran to where Uncle Bear lives nearby and her provided shelter and food for them. Uncle Bear was a wise fellow whom none knew except Peterkin.
+time to generate text: 110.16 seconds
+
+> The daughter had met Peterkin in the castle who consulted her to go to Uncle Bear.
+
+========In process of generating output...========
+Setting `pad_token_id` to 50256 (first `eos_token_id`) to generate sequence
+2021-03-12 11:26:45.620927: W tensorflow/core/framework/cpu_allocator_impl.cc:81] Allocation of 448292440 exceeds 10% of free system memory.
+
+
+========Story Output:========:
+Once upon a time, there was an old king who had two daughters. His daughters were known for their beauty, and they lived in the same house as his other three maids. The king wanted to have one of them married; but he could not get her out from under him without leaving behind such money that it would be better off having both. Little did he know, his daughter was in love with another. Therefore, the king devised to give away all which belonged unto either or neither until she should marry However, the daughter did not want the king to take back what came into play between himself And now you will see why I am talking about making sure that I am not wrong. The daughter pleaded with the king to change his mind, but nothing seemed likely enough. The daughter, unhappy with her father's decision, decided to run away with her lover. They ran to where Uncle Bear lives nearby and her provided shelter and food for them. Uncle Bear was a wise fellow whom none knew except Peter kin. The daughter had met Peter kin in the castle who consulted her to go to Uncle Bear. ------------
+time to generate text: 33.54 seconds
+
+> Now in Uncle Bear's home, she and her lover lived happily ever
+
+========In process of generating output...========
+Setting `pad_token_id` to 50256 (first `eos_token_id`) to generate sequence
+
+
+========Story Output:========:
+Once upon a time, there was an old king who had two daughters. His daughters were known for their beauty, and they lived in the same house as his other three maids. The king wanted to have one of them married; but he could not get her out from under him without leaving behind such money that it would be better off having both. Little did he know, his daughter was in love with another. Therefore, the king devised to give away all which belonged unto either or neither until she should marry However, the daughter did not want the king to take back what came into play between himself And now you will see why I am talking about making sure that I am not wrong. The daughter pleaded with the king to change his mind, but nothing seemed likely enough. The daughter, unhappy with her father's decision, decided to run away with her lover. They ran to where Uncle Bear lives nearby and her provided shelter and food for them. Uncle Bear was a wise fellow whom none knew except Peter kin. The daughter had met Peter kin in the castle who consulted her to go to Uncle Bear. ------------ Now in Uncle Bear's home, she and her lover lived happily ever --------------
+time to generate text: 87.92 seconds
+
+> after.
+
+========In process of generating output...========
+Setting `pad_token_id` to 50256 (first `eos_token_id`) to generate sequence
+
+
+========Story Output:========:
+Once upon a time, there was an old king who had two daughters. His daughters were known for their beauty, and they lived in the same house as his other three maids. The king wanted to have one of them married; but he could not get her out from under him without leaving behind such money that it would be better off having both. Little did he know, his daughter was in love with another. Therefore, the king devised to give away all which belonged unto either or neither until she should marry However, the daughter did not want the king to take back what came into play between himself And now you will see why I am talking about making sure that I am not wrong. The daughter pleaded with the king to change his mind, but nothing seemed likely enough. The daughter, unhappy with her father's decision, decided to run away with her lover. They ran to where Uncle Bear lives nearby and her provided shelter and food for them. Uncle Bear was a wise fellow whom none knew except Peter kin. The daughter had met Peter kin in the castle who consulted her to go to Uncle Bear. ------------ Now in Uncle Bear's home, she and her lover lived happily ever -------------- after.
+time to generate text: 47.70 seconds
+
+> quit
+
+(tf_env) C:\Users\tiffany\Desktop\CS175-Story-Generator>
